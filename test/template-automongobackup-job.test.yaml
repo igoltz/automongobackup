@@ -1,0 +1,83 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata: {}
+parameters:
+- name: SERVICE_NAME
+  value: automongobackup
+  description: "Name of this service"
+- name: DATABASE_SECRET
+  description: "Name of the secret to get credentials from"
+  required: true
+# not used yet
+#- name: DATABASE_QUERY
+#  value: 'ssl=false'
+- name: DATABASE_HOST
+  description: "Name of the mongodb service to backup"
+  required: true
+- name: DATABASE_PORT
+  value: "27017"
+- name: VERBOSE
+  description: "run mongodump with high verbosity"
+objects:
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    name: ${DATABASE_SECRET}-backup
+    labels:
+      app: automongobackup
+  spec:
+    # backOffLimit = how many times to retry the job before giving up
+    backoffLimit: 5
+    # completions = how many successful runs are needed to mark the job completed
+    completions: 1
+    # activeDeadlineSeconds = maximum duration the job can run
+    activeDeadlineSeconds: 600
+    template:
+      spec:
+        restartPolicy: OnFailure
+        containers:
+        - name: ${SERVICE_NAME}
+          image: automongobackup
+          env:
+            - name: DBNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ${DATABASE_SECRET}
+                  key: database-name
+            - name: DBUSERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ${DATABASE_SECRET}
+                  key: database-user
+            - name: DBPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ${DATABASE_SECRET}
+                  key: database-password
+            - name: DBHOST
+              value: ${DATABASE_HOST}
+            - name: DBPORT
+              value: ${DATABASE_PORT}
+            - name: BACKUPDIR
+              value: "/mongodbdumps/${DATABASE_HOST}/$(DBNAME)"
+            - name: VERBOSE
+              value: ${VERBOSE}
+          command: 
+            - bash
+            - -c
+          args:
+             - /opt/backup/automongobackup.sh; sleep 500
+          volumeMounts:
+            - mountPath: /mongodbdumps
+              name: mongodb-dumps
+            - mountPath: /etc/sysconfig/
+              name: automongobackup-config
+        volumes:
+          - name: mongodb-dumps
+            emptyDir: {}
+          - name: automongobackup-config
+            configMap:
+              name: ${DATABASE_SECRET}-automongobackup
+              items:
+              - key: automongobackup
+                path: automongobackup

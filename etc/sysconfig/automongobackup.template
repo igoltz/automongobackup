@@ -1,0 +1,19 @@
+DOHOURLY="no"
+HOURLYRETENTION=24
+
+# Do you want to do daily backups? How long do you want to keep them?
+DODAILY="yes"
+DAILYRETENTION=0
+
+# Which day do you want weekly backups? (1 to 7 where 1 is Monday)
+DOWEEKLY="yes"
+WEEKLYDAY=6
+WEEKLYRETENTION=4
+
+# Do you want monthly backups? How long do you want to keep them?
+DOMONTHLY="yes"
+MONTHLYRETENTION=4
+
+
+# Set to let run mongodump with high verbosity
+VERBOSE="yes"

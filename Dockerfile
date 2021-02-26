@@ -9,6 +9,8 @@ USER root
 ENV APPDIR="/opt/backup"
 ENV DUMPDIR="/var/backups/mongodb"
 
+WORKDIR ${APPDIR}
+
 RUN whoami && \
     mkdir -p ${APPDIR} && \
     mkdir -p ${DUMPDIR} && \
@@ -20,4 +22,4 @@ COPY etc/default/automongobackup /etc/default/
 
 USER mongodb
 
-CMD /bin/bash -c ${APPDIR}/automongobackup.sh
+CMD  ["/bin/bash", "-c", "${APPDIR}/automongobackup.sh"]

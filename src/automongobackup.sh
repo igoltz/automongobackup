@@ -133,6 +133,9 @@ REQUIREDBAUTHDB="yes"
 # Command run after backups (uncomment to use)
 # POSTBACKUP=""
 
+# Set to let run mongodump with high verbosity
+# VERBOSE=
+
 #=====================================================================
 # Options documentation
 #=====================================================================
@@ -323,6 +326,10 @@ OPT=""                                            # OPT string for use with mong
 OPTSEC=""                                         # OPT string for use with mongodump in select_secondary_member function
 QUERY=""                                          # QUERY string for use with mongodump
 HOURLYQUERY=""                                    # HOURLYQUERY string for use with mongodump
+VERBOSITY="--quiet"                               # do a quiet mongodump
+
+# Do we need to run mongodump with high verbosity?
+[ -n "$VERBOSE" ] && VERBOSITY="-vvvvv"
 
 # Do we need to use a username/password?
 if [ "$DBUSERNAME" ]; then
@@ -434,12 +441,12 @@ dbdump () {
     if [ -n "$QUERY" ]; then
         # filter for point-in-time snapshotting and if DOHOURLY=yes
         # shellcheck disable=SC2086
-        mongodump --quiet --host=$DBHOST:$DBPORT --out="$1" $OPT -q "$QUERY"
+        mongodump ${VERBOSITY} --host=$DBHOST:$DBPORT --out="$1" $OPT -q "$QUERY"
         MDUMPSTATUS=$?
       else
         # all others backups type
         # shellcheck disable=SC2086
-        mongodump --quiet --host=$DBHOST:$DBPORT --out="$1" $OPT
+        mongodump ${VERBOSITY} --host=$DBHOST:$DBPORT --out="$1" $OPT
         MDUMPSTATUS=$?
     fi
     if [ $MDUMPSTATUS -ne 0 ]; then

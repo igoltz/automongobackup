@@ -56,13 +56,13 @@ set -eo pipefail
 # DBAUTHDB=""
 
 # Host name (or IP address) of mongo server e.g localhost
-DBHOST="127.0.0.1"
+DBHOST="${DBHOST:-127.0.0.1}"
 
 # Port that mongo is listening on
-DBPORT="27017"
+DBPORT="${DBPORT:-27017}"
 
 # Backup directory location e.g /backups
-BACKUPDIR="/var/backups/mongodb"
+BACKUPDIR="${BACKUPDIR:-/var/backups/mongodb}"
 
 # Mail setup
 # What would you like to be mailed to you?

@@ -15,7 +15,8 @@ RUN whoami && \
     mkdir -p ${APPDIR} && \
     mkdir -p ${DUMPDIR} && \
     chgrp -R 0 ${DUMPDIR} && \
-    chmod -R g=u ${DUMPDIR}
+    chmod -R g=u ${DUMPDIR} && \
+    yum -y install tree && yum clean all -y
 
 COPY src/automongobackup.sh ${APPDIR}
 COPY etc/default/automongobackup /etc/default/

@@ -1,6 +1,7 @@
 #FROM mongo
 #FROM registry.redhat.io/rhscl/mongodb-36-rhel7
-FROM registry.access.redhat.com/rhscl/mongodb-36-rhel7
+#FROM registry.access.redhat.com/rhscl/mongodb-36-rhel7
+FROM quay.io/centos7/mongodb-36-centos7
 
 LABEL maintainer="Immo.Goltz@goethe.de"
 
